@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://com/shop/webservices/getProductsServices" 
+	xmlns:product="http://my.shop.com"
+	targetNamespace="http://com/shop/webservices/getProductsServices"
+	elementFormDefault="qualified">
+	<xsd:import namespace="http://my.shop.com"
+		schemaLocation="Products.xsd" />
+	<xsd:element name="GetProductsRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="productId" type="xsd:string" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="GetProductsResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="productDetails" type="product:Products" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>  

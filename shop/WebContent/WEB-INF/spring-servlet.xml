@@ -1,0 +1,106 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sws="http://www.springframework.org/schema/web-services"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.2.xsd
+http://www.springframework.org/schema/web-services
+							http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+							http://www.springframework.org/schema/oxm
+http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
+
+	
+	<context:annotation-config />
+	<context:component-scan base-package="shop.controller" />
+<context:component-scan base-package="shop.dao" />
+	<context:component-scan base-package="shop.service" />
+	
+	
+	
+	<mvc:annotation-driven />
+	
+	<bean id="shopService" class="shop.service.ShopServiceImpl" />
+	
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+	 p:driverClassName="com.mysql.jdbc.Driver"
+		p:url="jdbc:mysql://localhost:3306/shop" p:username="root"
+		p:password="nbuser" />
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="shop.domain" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+	</bean>
+
+	
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+<property name="basename"  value="message" />
+</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:viewClass="org.springframework.web.servlet.view.JstlView" p:prefix="WEB-INF/jsp/"
+		p:suffix=".jsp" />
+		
+		
+		<bean name="webserviceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
+		<property name="defaultUri" value="http://localhost:8083/shop/services" />
+		<property name="marshaller" ref="marshaller" />
+		<property name="unmarshaller" ref="unmarshaller" />
+	</bean>
+	
+	<oxm:jaxb2-marshaller id="marshaller">
+		<oxm:class-to-be-bound name="com.shop.my.Products"/>
+		<oxm:class-to-be-bound name="com.shop.webservices.getproductsservices.GetProductsRequest"/>
+		<oxm:class-to-be-bound name="com.shop.webservices.getproductsservices.GetProductsResponse"/>
+		
+		</oxm:jaxb2-marshaller>
+
+<oxm:jaxb2-marshaller id="unmarshaller">
+			<oxm:class-to-be-bound name="com.shop.my.Products"/>
+		<oxm:class-to-be-bound name="com.shop.webservices.getproductsservices.GetProductsRequest"/>
+		<oxm:class-to-be-bound name="com.shop.webservices.getproductsservices.GetProductsResponse"/>
+		
+		</oxm:jaxb2-marshaller>
+		
+	
+	<bean id="client" class="com.shop.client.ProductsClientImpl">
+													 
+		<property name="webServiceTemplate" ref="webserviceTemplate" />
+	</bean>
+	
+	<bean id="shopController" class="shop.controller.ShopController">
+	
+	<property name="productsClient" ref="client" />
+	</bean>
+
+</beans>

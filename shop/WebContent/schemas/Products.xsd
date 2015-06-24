@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+ xmlns="http://my.shop.com"  
+	targetNamespace="http://my.shop.com" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	<xs:element name="Products" type="Products" />
+	<xs:complexType name="Products">
+		<xs:sequence>
+			<xs:element name="id" type="xs:int" />
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="descr" type="xs:string" />
+			<xs:element name="price" type="xs:float" />
+			<xs:element name="photo" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>  
